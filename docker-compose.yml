@@ -1,0 +1,54 @@
+version: "3.2"
+
+services:
+  # syslog
+  rsyslog:
+    image: rsyslog/syslog_appliance_alpine
+    container_name: rsyslog
+    platform: linux/amd64
+    volumes:
+      - ./rsyslog.conf:/etc/rsyslog.conf:ro
+    networks:
+      backend:
+        ipv4_address: 172.28.1.4
+
+  # HAProxy 1
+  haproxy1:
+    image: haproxy:1.5.18
+    container_name: haproxy1
+    volumes:
+      - ./haproxy1:/usr/local/etc/haproxy:ro
+    ports:
+      - "8000:80"
+    platform: linux/amd64
+    networks:
+      backend:
+        ipv4_address: 172.28.1.5
+
+  # HAProxy 2
+  haproxy2:
+    image: haproxy:1.5.18
+    container_name: haproxy2
+    volumes:
+      - ./haproxy2:/usr/local/etc/haproxy:ro
+    platform: linux/amd64
+    networks:
+      backend:
+        ipv4_address: 172.28.1.6
+
+  # websocket
+  web:
+    build:
+      context: .
+    container_name: websocket
+    platform: linux/amd64
+    networks:
+      backend:
+        ipv4_address: 172.28.1.7
+
+networks:
+  backend:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
