@@ -33,4 +33,5 @@ Open `websocket.html`
 ---
 
 **Endpoint:** ws://localhost:8080/
+
 **Network path:** `zeus:8080 -> web:8000`
