@@ -1,0 +1,5 @@
+enabled	Yes
+pool	WebSockets
+port	8080
+rules	reqWebSockets
+timeout	40

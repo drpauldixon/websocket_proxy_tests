@@ -7,44 +7,55 @@ services:
     container_name: rsyslog
     platform: linux/amd64
     volumes:
-      - ./rsyslog.conf:/etc/rsyslog.conf:ro
+      - ./rsyslog/rsyslog.conf:/etc/rsyslog.conf:ro
+    networks:
+      backend:
+        ipv4_address: 172.28.1.3
+
+  # HAProxy ingress router
+  haproxy:
+    image: haproxy:1.5.18
+    container_name: haproxy
+    volumes:
+      - ./haproxy:/usr/local/etc/haproxy:ro
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+    platform: linux/amd64
     networks:
       backend:
         ipv4_address: 172.28.1.4
 
-  # HAProxy 1
-  haproxy1:
-    image: haproxy:1.5.18
-    container_name: haproxy1
-    volumes:
-      - ./haproxy1:/usr/local/etc/haproxy:ro
-    ports:
-      - "8000:80"
+  # Zeus traffic manager
+  zeus:
+    build:
+      context: ./zeus
+    container_name: zeus
     platform: linux/amd64
+    environment:
+      - ZEUS_EULA=accept
+      - ZEUS_PASS=admin
+    privileged: true
+    init: true
+    tty: true
+    ports:
+      - "8080:8080"
+      - "9070:9070"
+      - "9080:9080"
+      - "9090:9090"
     networks:
       backend:
         ipv4_address: 172.28.1.5
 
-  # HAProxy 2
-  haproxy2:
-    image: haproxy:1.5.18
-    container_name: haproxy2
-    volumes:
-      - ./haproxy2:/usr/local/etc/haproxy:ro
-    platform: linux/amd64
-    networks:
-      backend:
-        ipv4_address: 172.28.1.6
-
   # websocket
   web:
     build:
-      context: .
+      context: ./web
     container_name: websocket
     platform: linux/amd64
     networks:
       backend:
-        ipv4_address: 172.28.1.7
+        ipv4_address: 172.28.1.6
 
 networks:
   backend:

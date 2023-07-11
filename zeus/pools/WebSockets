@@ -1,0 +1,5 @@
+dns_autoscale!enabled	Yes
+dns_autoscale!hostnames	web
+dns_autoscale!port	8000
+load_balancing!weighting!web:8000	1
+monitors	Ping
