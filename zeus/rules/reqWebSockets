@@ -10,7 +10,7 @@ log.info("Connection header: " . $conn_header);
 
 if ( string.contains($upgrade_header, "websocket") && string.contains($conn_header, "upgrade") ) {
    log.info("Found websocket request");
-   request.setMaxReplyTime( 200 );
+   request.setMaxReplyTime( 45 );
    pool.select("WebSockets");
    connection.bypassProtocolHandling();
 } else {
